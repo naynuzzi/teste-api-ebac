@@ -1,14 +1,14 @@
 /// <reference types="cypress" />
 
-describe('Login', () => {
+describe('Login teste de API', () => {
 
     it('Deve fazer login com sucesso', () => {
         cy.request({
             method: 'POST',
             url: 'login',
             body: {
-                "email": "fulano@qa.com",
-                "password": "teste" 
+               "email": "nanyqA@qa.com.br",
+               "password": "testeQA" ,
             }
         }).then((response) => {
             expect(response.status).to.equal(200)

@@ -1,30 +1,118 @@
 /// <reference types="cypress" />
+import contratos from '../contratos/usuarios.contrato'
+import { faker } from '@faker-js/faker';
 
 describe('Testes da Funcionalidade Usuários', () => {
+  let token
+  before(() => {
+      cy.token('nanyqA@qa.com.br', 'testeQA')
+        .then(tkn => { token = tkn })
+  });
+  beforeEach(() => {
+    let nome = 'Usuario EBAC editado' + Math.floor(Math.random() * 1000)
+    let email = faker.internet.email()
+    let senha = faker.internet.password()
+    let admin = faker.datatype.boolean()
+  });
 
   it('Deve validar contrato de usuários', () => {
-    //TODO: 
+    cy.request('usuarios').then(response => {
+      return contratos.validateAsync(response.body)
+    })
+   
   });
 
   it('Deve listar usuários cadastrados', () => {
-    //TODO: 
+    cy.request({
+      method:'GET',
+      url: 'usuarios'
+    }).should((response) => {
+      expect(response.status).to.equal(200)
+      expect(response.body).to.have.property('usuarios')
+    })
   });
 
   it('Deve cadastrar um usuário com sucesso', () => {
-    //TODO: 
+    let nome = 'Usuario EBAC' + Math.floor(Math.random() * 1000);
+    let email = nome.toLowerCase().replace(' ', '') + '@test.com';  
+    let senha = 'senha123';  
+    cy.request({
+      method: 'POST',
+      url: 'usuarios',  
+      body: {
+        "nome": nome,
+        "email": email,
+        "password": senha,
+        "administrador": "true"
+      }
+    }).should((response) => {
+      expect(response.status).to.equal(201);
+      expect(response.body.message).to.equal('Cadastro realizado com sucesso');  
+    });
   });
 
   it('Deve validar um usuário com email inválido', () => {
-    //TODO: 
+    cy.request({
+      method: 'POST',
+      url: 'usuarios',
+      havers: {authorization: token},
+      body: {
+        "nome": 'Nayara Marques Nuzzi',
+        "email": 'nayQa@qa.com.br',
+        "password": "testeQA",
+        "administrador": "true"
+      },failOnStatusCode: false
+    }).should((response) => {
+      expect(response.status).to.equal(400)
+      expect(response.body.message).to.equal('Este email já está sendo usado')
+      
+    })
+    
   });
 
   it('Deve editar um usuário previamente cadastrado', () => {
-    //TODO: 
+    let nome = 'Usuario EBAC' + Math.floor(Math.random() * 1000);
+    cy.cadastrarUsuario(token, usuario, email, senha, 'true')
+     .then(response => {
+       let id = response.body._id
+      cy.request({
+        method: 'PUT',
+        url: `usuarios/${id}`,
+        havers: {authorization: token},
+        body: {
+          "nome": 'Usuario EBAC editado' ,
+          "email": 'nayQa@qa.com.br',
+          "password": "testeQA",
+          "administrador": "true"
+        }
+      })
+    })
+    
   });
-
-  it('Deve deletar um usuário previamente cadastrado', () => {
-    //TODO: 
+    
+  it.only('Deve deletar um usuário previamente cadastrado', () => {
+    cy.cadastrarUsuario(token, nome, email, senha, admin)
+      .then(response => {
+        let id = response.body._id
+        cy.request({
+          method: 'DELETE',
+          url: `usuarios/${id}`,
+          headers: {authorization: token}
+        })
+      })
+     
   });
+ 
 
+  it('Deve cadastrar um usuário utilizando o compomente com sucesso', () => {
+      
+      cy.cadastrarUsuario(token, nome, email, senha, admin.toString())
+      .then(response => {
+        let id = response.body._id
+      }).should((response) => {
+        expect(response.status).to.equal(201)
+        expect(response.body.message).to.equal('Cadastro realizado com sucesso')
+      })
+  })
 
 });
