@@ -42,7 +42,7 @@ Cypress.Commands.add('cadastrarUsuario' , (token, usuario, email, senha, admin) 
     })
  })
 
- Cypress.Commands.add('AtualizarUsuario' , (token, usuario, email, senha, admin) =>{
+ Cypress.Commands.add('atualizarUsuario' , (token, usuario, email, senha, admin) =>{
     cy.request({
         method: 'PUT', 
         url: `usuarios/${id}`,

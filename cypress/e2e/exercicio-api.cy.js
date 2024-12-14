@@ -73,24 +73,23 @@ describe('Testes da Funcionalidade Usuários', () => {
   it('Deve editar um usuário previamente cadastrado', () => {
     let nome = 'Usuario EBAC' + Math.floor(Math.random() * 1000);
     cy.cadastrarUsuario(token, usuario, email, senha, 'true')
-     .then(response => {
-       let id = response.body._id
-      cy.request({
-        method: 'PUT',
-        url: `usuarios/${id}`,
-        havers: {authorization: token},
-        body: {
-          "nome": 'Usuario EBAC editado' ,
-          "email": 'nayQa@qa.com.br',
-          "password": "testeQA",
-          "administrador": "true"
-        }
-      })
-    })
-    
+      .then(response => {
+        let id = response.body._id;
+
+        cy.request({
+          method: 'PUT',
+          url: `usuarios/${id}`,
+          headers: { authorization: token }, 
+          body: {
+            "nome": 'Usuario EBAC editado',
+            "email": 'nayQa@qa.com.br',
+            "password": "testeQA",
+            "administrador": "true"
+          }
+        })
   });
     
-  it.only('Deve deletar um usuário previamente cadastrado', () => {
+  it('Deve deletar um usuário previamente cadastrado', () => {
     cy.cadastrarUsuario(token, nome, email, senha, admin)
       .then(response => {
         let id = response.body._id
@@ -100,19 +99,17 @@ describe('Testes da Funcionalidade Usuários', () => {
           headers: {authorization: token}
         })
       })
-     
   });
- 
 
   it('Deve cadastrar um usuário utilizando o compomente com sucesso', () => {
-      
       cy.cadastrarUsuario(token, nome, email, senha, admin.toString())
-      .then(response => {
+        .then(response => {
         let id = response.body._id
       }).should((response) => {
         expect(response.status).to.equal(201)
         expect(response.body.message).to.equal('Cadastro realizado com sucesso')
       })
-  })
+  });
 
+  });
 });
