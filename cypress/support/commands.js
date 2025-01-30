@@ -40,20 +40,20 @@ Cypress.Commands.add('cadastrarUsuario' , (token, usuario, email, senha, admin) 
         }, 
         failOnStatusCode: false
     })
- })
+});
 
- Cypress.Commands.add('AtualizarUsuario' , (token, usuario, email, senha, admin) =>{
+ Cypress.Commands.add('atualizarUsuario', (token,nome, email, senha, admin) => {
     cy.request({
-        method: 'PUT', 
-        url: `usuarios/${id}`,
-        headers: {authorization: token},
-        body: {
-            "nome": usuario,
-            "email": email,
-            "password": senha,
-            "administrador": admin,
-        }, 
-        failOnStatusCode: false
+      method: 'PUT',
+      url: 'usuarios',
+      headers: { authorization: token },
+      body: {
+        "nome": nome,
+        "email": email,
+        "password": senha,
+        "administrador": admin,
+      },
+      failOnStatusCode: false
     })
- })
+});
 

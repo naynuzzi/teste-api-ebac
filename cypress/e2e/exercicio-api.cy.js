@@ -70,23 +70,26 @@ describe('Testes da Funcionalidade Usuários', () => {
     
   });
 
-  it('Deve editar um usuário previamente cadastrado', () => {
-    let nome = 'Usuario EBAC' + Math.floor(Math.random() * 1000);
-    cy.cadastrarUsuario(token, usuario, email, senha, 'true')
+  it.only('Deve editar um usuário previamente cadastrado', () => {
+    let nome = 'Usuario EBAC edit' + Math.floor(Math.random() * 1000);
+    cy.alizarUsuario(token, nome, email, senha, admin)
      .then(response => {
        let id = response.body._id
-      cy.request({
+       cy.request({
         method: 'PUT',
         url: `usuarios/${id}`,
-        havers: {authorization: token},
+        headers: {authorization: token},
         body: {
-          "nome": 'Usuario EBAC editado' ,
-          "email": 'nayQa@qa.com.br',
+          "nome": nome,
+          "email": email,
           "password": "testeQA",
           "administrador": "true"
         }
-      })
-    })
+      }).should(response => {
+        expect(response.status).to.equal(200)
+        expect(response.body.message).to.equal('Registro alterado com sucesso')
+      });
+    });
     
   });
     
@@ -98,6 +101,9 @@ describe('Testes da Funcionalidade Usuários', () => {
           method: 'DELETE',
           url: `usuarios/${id}`,
           headers: {authorization: token}
+        }).then(response => {
+          expect(response.body.message).to.equal('Registro excluído com sucesso')
+          expect(response.status).to.equal(200)
         })
       })
      
