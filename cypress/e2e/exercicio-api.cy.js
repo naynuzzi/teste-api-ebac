@@ -108,19 +108,18 @@ describe('Testes da Funcionalidade Usuários', () => {
           expect(response.status).to.equal(200)
         })
       })
-     
   });
- 
 
   it('Deve cadastrar um usuário utilizando o compomente com sucesso ', () => {
       
       cy.cadastrarUsuario(token, nome, email, senha, admin.toString())
-      .then(response => {
+        .then(response => {
         let id = response.body._id
       }).should((response) => {
         expect(response.status).to.equal(201)
         expect(response.body.message).to.equal('Cadastro realizado com sucesso')
       })
-  })
+  });
 
 });
+
