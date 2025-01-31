@@ -4,15 +4,20 @@ import { faker } from '@faker-js/faker';
 
 describe('Testes da Funcionalidade Usuários', () => {
   let token
+  let nome
+  let email
+  let senha
+  let admin
   before(() => {
       cy.token('nanyqA@qa.com.br', 'testeQA')
         .then(tkn => { token = tkn })
   });
   beforeEach(() => {
-    let nome = 'Usuario EBAC editado' + Math.floor(Math.random() * 1000)
-    let email = faker.internet.email()
-    let senha = faker.internet.password()
-    let admin = faker.datatype.boolean()
+    nome = 'Usuario EBAC ' + Math.floor(Math.random() * 1000) //joao silva
+    email = faker.internet.email() // joao.silva@qa.com
+    senha = faker.internet.password() // senha123
+    admin = faker.datatype.boolean().toString() // true
+    console.log(nome ," - ", email," - ", senha," - ", admin)
   });
 
   it('Deve validar contrato de usuários', () => {
@@ -32,10 +37,7 @@ describe('Testes da Funcionalidade Usuários', () => {
     })
   });
 
-  it('Deve cadastrar um usuário com sucesso', () => {
-    let nome = 'Usuario EBAC' + Math.floor(Math.random() * 1000);
-    let email = nome.toLowerCase().replace(' ', '') + '@test.com';  
-    let senha = 'senha123';  
+  it('Deve cadastrar um usuário com sucesso', () => { 
     cy.request({
       method: 'POST',
       url: 'usuarios',  
@@ -70,10 +72,10 @@ describe('Testes da Funcionalidade Usuários', () => {
     
   });
 
-  it.only('Deve editar um usuário previamente cadastrado', () => {
+  it('Deve editar um usuário previamente cadastrado', () => {
     let nome = 'Usuario EBAC edit' + Math.floor(Math.random() * 1000);
-    cy.alizarUsuario(token, nome, email, senha, admin)
-     .then(response => {
+    cy.cadastrarUsuario(token, nome, email, senha, admin)
+    .then(response => {
        let id = response.body._id
        cy.request({
         method: 'PUT',
@@ -82,8 +84,8 @@ describe('Testes da Funcionalidade Usuários', () => {
         body: {
           "nome": nome,
           "email": email,
-          "password": "testeQA",
-          "administrador": "true"
+          "password": senha,
+          "administrador": admin
         }
       }).should(response => {
         expect(response.status).to.equal(200)
@@ -93,7 +95,7 @@ describe('Testes da Funcionalidade Usuários', () => {
     
   });
     
-  it.only('Deve deletar um usuário previamente cadastrado', () => {
+  it('Deve deletar um usuário previamente cadastrado', () => {
     cy.cadastrarUsuario(token, nome, email, senha, admin)
       .then(response => {
         let id = response.body._id
@@ -110,7 +112,7 @@ describe('Testes da Funcionalidade Usuários', () => {
   });
  
 
-  it('Deve cadastrar um usuário utilizando o compomente com sucesso', () => {
+  it('Deve cadastrar um usuário utilizando o compomente com sucesso ', () => {
       
       cy.cadastrarUsuario(token, nome, email, senha, admin.toString())
       .then(response => {

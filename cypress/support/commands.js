@@ -30,7 +30,7 @@ Cypress.Commands.add('token', (email, senha) => {
 Cypress.Commands.add('cadastrarUsuario' , (token, usuario, email, senha, admin) =>{
     cy.request({
         method: 'POST', 
-        url: 'login',
+        url: 'usuarios',
         headers: {authorization: token},
         body: {
             "nome": usuario,
@@ -42,7 +42,7 @@ Cypress.Commands.add('cadastrarUsuario' , (token, usuario, email, senha, admin) 
     })
 });
 
- Cypress.Commands.add('atualizarUsuario', (token,nome, email, senha, admin) => {
+ Cypress.Commands.add('atualizarUsuario', (token, nome, email, senha, admin) => {
     cy.request({
       method: 'PUT',
       url: 'usuarios',
